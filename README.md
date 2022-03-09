@@ -23,3 +23,8 @@ Env variables:
 //usr/local/bin/crealtime "$0" { $@ }; exit
 ```
 
+## Test usage (or just an example)
+1. `make install` crealtime
+2. Just run `test/main`
+3. You can also pass some args in there: `test/main a b c "test test"`
+
