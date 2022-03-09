@@ -1,5 +1,5 @@
 # crealtime
-Run C files with simple shebang
+Run C files with a simple shebang
 
 
 ## Help
