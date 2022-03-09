@@ -102,7 +102,7 @@ bool try_compile(const char* file_path, const char* bin_path, bool force)
 }
 
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
     /* help */
     if (argc < 2) {

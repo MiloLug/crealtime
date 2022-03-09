@@ -1,4 +1,4 @@
-//usr/local/bin/crealtime "$0" { $@ }; exit
+//usr/local/bin/crealtime "$0" { "$@" }; exit
 
 #include <stdio.h>
 

@@ -20,7 +20,7 @@ Env variables:
 
 ## The shebang
 ```bash
-//usr/local/bin/crealtime "$0" { $@ }; exit
+//usr/local/bin/crealtime "$0" { "$@" }; exit
 ```
 
 ## Test usage (or just an example)
