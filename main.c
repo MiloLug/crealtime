@@ -122,10 +122,13 @@ int main(int argc, char *argv[])
     }
     
     /* env initialization */
+#ifdef USE_ENV_VARS
     const char *crealtime_bin_path = getenv("CREALTIME_BIN_PATH");
     if (!crealtime_bin_path)
         crealtime_bin_path = default_crealtime_bin_path;
-   
+#else
+    const char *crealtime_bin_path = default_crealtime_bin_path;
+#endif
     /* args initialization */
     const char *file_path = argv[argc - 1];
     char **sub_args_start = NULL;  // arguments for the compiled application

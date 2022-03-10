@@ -1,5 +1,7 @@
 #include <linux/limits.h>
 
+/* if undef this - all the defaults will be used */
+#define USE_ENV_VARS
 
 /* Default env values */
 const char default_crealtime_bin_path[] = "/tmp/crealtime";
