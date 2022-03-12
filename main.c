@@ -39,6 +39,7 @@ void join_strings(const char * const *strs, char *result)
     }
 }
 
+#ifdef MKDIR_CREALTIME_BIN_PATH
 void mkdir_p(const char *dir)
 {
     struct stat check_stat;
@@ -67,7 +68,7 @@ void mkdir_p(const char *dir)
         }
     mkdir(tmp, S_IRWXU);
 }
-
+#endif
 
 bool try_compile(const char* file_path, const char* bin_path, bool force)
 {
@@ -86,11 +87,6 @@ bool try_compile(const char* file_path, const char* bin_path, bool force)
 
     err = stat(bin_path, &bin_stat);
     if (err != 0 || file_stat.st_mtime > bin_stat.st_mtime || force) {
-        char *tmp_bin_path = strdup(bin_path);  // free
-        const char *bin_dir_path = dirname(tmp_bin_path);
-        mkdir_p(bin_dir_path);
-        free(tmp_bin_path);
-
         sprintf(command, compiler_command_template, file_path, bin_path);
         err = system(command);
         if (err == -1) {
@@ -115,8 +111,10 @@ int main(int argc, char *argv[])
             "Flags:\n"
             "    -f - force recompilation\n"
             "    -c - compile the source but not run it\n\n"
+#ifdef USE_ENV_VARS
             "Env variables:\n"
             "    CREALTIME_BIN_PATH - string; a path, where temporary binaries will reside\n\n"
+#endif
         );
         return 0;
     }
@@ -186,10 +184,23 @@ int main(int argc, char *argv[])
         exit(errno);
     }
     
-    const char* bin_path_template[] = {crealtime_bin_path, file_full_path, NULL};
-    join_strings(bin_path_template, (char*)bin_full_path);
+    char *tmp_bin_full_path = bin_full_path;
+    const char *tmp_file_full_path = file_full_path;
+    const char *tmp_crealtime_bin_path = crealtime_bin_path;
+    while (*tmp_crealtime_bin_path) {
+        *(tmp_bin_full_path++) = *(tmp_crealtime_bin_path++);
+    }
+    *(tmp_bin_full_path++) = *(tmp_file_full_path++);
+    while (*tmp_file_full_path) {
+        *(tmp_bin_full_path++) = *tmp_file_full_path == '/' ? '%' : *tmp_file_full_path;
+        tmp_file_full_path++;
+    }
+    *tmp_bin_full_path = 0;
 
     /* compilation + running */
+#ifdef MKDIR_CREALTIME_BIN_PATH
+    mkdir_p(crealtime_bin_path);
+#endif
     if (try_compile(file_full_path, bin_full_path, force_recompile)) {
         char **sub_args_list;
         char **tmp_sub_args_list;
@@ -202,7 +213,7 @@ int main(int argc, char *argv[])
         } else {
             /* array len
              * = argc - own_argc - two_brackets + bin_path + NULL_ending
-             * = atgc - own_argc
+             * = argc - own_argc
              * */
             tmp_sub_args_list = sub_args_list = (char**)malloc(sizeof(char*) * (argc - own_argc));
 
