@@ -5,11 +5,12 @@ include config.mk
 
 SRC = main.c
 OBJ = ${SRC:.c=.o}
+BIN_NAME = crealtime
 
-all: options crealtime
+all: options ${BIN_NAME}
 
 options:
-	@echo crealtime build options:
+	@echo ${BIN_NAME} build options:
 	@echo "CFLAGS   = ${CFLAGS}"
 	@echo "LDFLAGS  = ${LDFLAGS}"
 	@echo "CC       = ${CC}"
@@ -22,26 +23,26 @@ ${OBJ}: config.h config.mk
 config.h:
 	cp config.def.h $@
 
-crealtime: ${OBJ}
+${BIN_NAME}: ${OBJ}
 	${CC} -o $@ ${OBJ} ${LDFLAGS}
 
 clean:
-	rm -f crealtime ${OBJ} crealtime-${VERSION}.tar.gz
+	rm -f ${BIN_NAME} ${OBJ} ${BIN_NAME}-${VERSION}.tar.gz
 
 dist: clean
-	mkdir -p crealtime-${VERSION}
+	mkdir -p ${BIN_NAME}-${VERSION}
 	cp -R LICENSE Makefile README config.def.h config.mk\
-		  ${SRC} crealtime-${VERSION}
-	tar -cf crealtime-${VERSION}.tar crealtime-${VERSION}
-	gzip crealtime-${VERSION}.tar
-	rm -rf crealtime-${VERSION}
+		  ${SRC} ${BIN_NAME}-${VERSION}
+	tar -cf ${BIN_NAME}-${VERSION}.tar ${BIN_NAME}-${VERSION}
+	gzip ${BIN_NAME}-${VERSION}.tar
+	rm -rf ${BIN_NAME}-${VERSION}
 
 install: all
 	mkdir -p ${DESTDIR}${PREFIX}/bin
-	cp -f crealtime ${DESTDIR}${PREFIX}/bin
-	chmod 755 ${DESTDIR}${PREFIX}/bin/crealtime
+	cp -f ${BIN_NAME} ${DESTDIR}${PREFIX}/bin
+	chmod 755 ${DESTDIR}${PREFIX}/bin/${BIN_NAME}
 
 uninstall:
-	rm -f ${DESTDIR}${PREFIX}/bin/crealtime
+	rm -f ${DESTDIR}${PREFIX}/bin/${BIN_NAME}
 
 .PHONY: all options clean dist install uninstall
